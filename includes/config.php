@@ -88,7 +88,7 @@ if (!isset($_SESSION['sortby_channum']))
     $_SESSION['sortby_channum'] = 1;
 
 if (!isset($_SESSION['recorded_paging']))
-    $_SESSION['recorded_paging'] = null;
+    $_SESSION['recorded_paging'] = 10;
 
 if (!isset($_SESSION['genre_colors']))
     $_SESSION['genre_colors'] = 1;
