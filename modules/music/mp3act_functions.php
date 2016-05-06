@@ -279,7 +279,7 @@ function musicLookup($type, $itemid)
                    "FROM music_artists " .
                    "GROUP BY artist_name_sort " .
                    "HAVING artist_name_sort " .
-                   "LIKE " . $db->escape($itemid.'%') . " " .
+                   "LIKE " . $db->escape($itemid.'%') .
                    "ORDER BY artist_name_sort";
       }
       $sh = $db->query($query);
@@ -835,8 +835,8 @@ function musicLookup($type, $itemid)
         'GROUP BY ms.album_id '.
         'ORDER BY playcount DESC '.
         'LIMIT 40';
-      $result = mysqli_query($query);
-      if (!$result)
+      $sh = $db->query($query);
+      if (!$sh)
         break;
 
       $output = '<div class="head">
@@ -846,12 +846,11 @@ function musicLookup($type, $itemid)
           title="'.t('Return to Statistics Page').'">'.t('Back').'</a></div>
         <h2 class="music">'.t('Top Played Albums').'</h2></div>
         <ul class="music">';
-      while ($row = mysqli_fetch_array($result))
+      while ($row = $sh->fetch_array())
       {
         $output .= getHtmlAlbum($row['album_id'], $row['album_name'],
           $row['artist_name'], '', '', '', $row['playcount']."x");
       }
-      mysqli_free_result($result);
       $output .= '</ul>';
       break;
 
@@ -864,8 +863,8 @@ function musicLookup($type, $itemid)
         'GROUP BY ms.artist_id '.
         'ORDER BY playcount DESC '.
         'LIMIT 40';
-      $result = mysqli_query($query);
-      if (!$result)
+      $sh = $db->query($query);
+      if (!$sh)
         break;
 
       $output = '<div class="head">
@@ -875,12 +874,11 @@ function musicLookup($type, $itemid)
           title="'.t('Return to Statistics Page').'">'.t('Back').'</a></div>
         <h2 class="music">'.t('Top Played Artist').'</h2></div>
         <ul class="music">';
-      while ($row = mysqli_fetch_array($result))
+      while ($row = $sh->fetch_array())
       {
         $output .= getHtmlArtist($row['artist_id'], $row['artist_name'],
           '', '', '', $row['playcount']."x");
       }
-      mysqli_free_result($result);
       $output .= '</ul>';
       break;
 
@@ -919,8 +917,8 @@ function musicLookup($type, $itemid)
         'GROUP BY ms.album_id '.
         'ORDER BY ms.lastplay DESC '.
         'LIMIT 40';
-      $result = mysqli_query($query);
-      if (!$result)
+      $sh = $db->query($query);
+      if (!$sh)
         break;
 
       $output = '<div class="head">
@@ -930,12 +928,11 @@ function musicLookup($type, $itemid)
           title="'.t('Return to Statistics Page').'">'.t('Back').'</a></div>
         <h2 class="music">'.t('Recently Played Albums').'</h2></div>
         <ul class="music">';
-      while ($row = mysqli_fetch_array($result))
+      while ($row = $sh->fetch_array())
       {
         $output .= getHtmlAlbum($row['album_id'], $row['album_name'],
           $row['artist_name'], '', '', '', date('m.d.Y', $row['playdate']));
       }
-      mysqli_free_result($result);
       $output .= '</ul>';
       break;
 
@@ -1008,7 +1005,7 @@ function getRandItems($type)
 function searchMusic($terms, $option)
 {
   global $db;
-  $sql_terms = "CONCAT('%', ".$db->escape($terms).", '%')";
+  $sql_terms = $db->escape('%'.$terms.'%');
   $query = 'SELECT ms.song_id, ma.album_name, ms.track, mt.artist_name, ms.name, ms.rating, '.
     'SEC_TO_TIME(ms.length/1000) AS length, genre '.
     'FROM music_songs AS ms '.
